@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   runSimulation, 
-  runConvergenceSimulation,
-  runPathSimulation,
+  runConvergenceSimulation, 
+  runPathSimulation, 
   createBaselineMatrix, 
-  updateMatrixProbability
+  updateMatrixProbability 
 } from './services/markovService';
 import { 
   runWealthSimulation as runWealthSimLogic 
@@ -22,16 +22,17 @@ import MatrixGrid from './components/MatrixGrid';
 import MarkovGraph from './components/MarkovGraph';
 import MatrixEditor from './components/MatrixEditor';
 import FinalDistPieChart from './components/FinalDistPieChart';
-import Guide from './components/Guide'; // Import Guide
-import { SimulationResult, ConvergenceResult, WealthSimulationResult, Matrix, PathResult, STATE_LABELS, LifeState } from './types';
+import PhysicsSimulator from './components/PhysicsSimulator'; 
+import BayesSimulator from './components/BayesSimulator'; // Import Bayes
+import Guide from './components/Guide'; 
+import { SimulationResult, ConvergenceResult, WealthSimulationResult, Matrix, PathResult, LifeState } from './types';
 import { 
-  TrendingUp, Activity, GitCommit, Settings2, LayoutDashboard, Clock, UserCircle, 
-  Anchor, Zap, BarChart3, Lock, Rocket, Route, BookOpen 
+  Activity, Settings2, Clock, Anchor, Zap, Lock, Rocket, Route, BookOpen, Atom, BrainCircuit 
 } from 'lucide-react';
 
 export default function App() {
   // Set default tab to 'guide' for new users
-  const [activeTab, setActiveTab] = useState<'guide' | 'structure' | 'simulation' | 'steady' | 'convergence' | 'trap' | 'evolution' | 'path'>('guide');
+  const [activeTab, setActiveTab] = useState<'guide' | 'structure' | 'simulation' | 'steady' | 'convergence' | 'trap' | 'evolution' | 'path' | 'dissipative' | 'bayes'>('guide');
   
   // -- Simulation State (Module 1-3) --
   const [impactFactor, setImpactFactor] = useState<number>(0.015);
@@ -70,8 +71,7 @@ export default function App() {
   useEffect(() => {
     // Optimization: Only run sim if active tab requires it
     const relevantTabs = ['structure', 'simulation', 'steady'];
-    if (!relevantTabs.includes(activeTab) && activeTab !== 'guide') return; // 'guide' doesn't need it but we init it anyway or lazy load? 
-    // Actually simpler to just run it, computation is cheap enough.
+    if (!relevantTabs.includes(activeTab) && activeTab !== 'guide') return; 
     
     const useInteractiveMatrix = activeTab === 'structure' || activeTab === 'steady';
     const matrixToUse = useInteractiveMatrix ? customMatrix : undefined;
@@ -145,6 +145,8 @@ export default function App() {
             <TabButton active={activeTab === 'evolution'} onClick={() => setActiveTab('evolution')} icon={<Rocket size={16} />} label="M6:演化" />
             <div className="w-px h-6 bg-gray-300 mx-1"></div>
             <TabButton active={activeTab === 'path'} onClick={() => setActiveTab('path')} icon={<Route size={16} />} label="M7:路径" />
+            <TabButton active={activeTab === 'dissipative'} onClick={() => setActiveTab('dissipative')} icon={<Atom size={16} />} label="M8:耗散" />
+            <TabButton active={activeTab === 'bayes'} onClick={() => setActiveTab('bayes')} icon={<BrainCircuit size={16} />} label="M9:贝叶斯" />
           </div>
         </div>
       </header>
@@ -154,7 +156,7 @@ export default function App() {
         {/* GUIDE TAB */}
         {activeTab === 'guide' && <Guide />}
         
-        {/* MODULE 1-4 (Keep existing implementation logic hidden here for brevity, referencing components) */}
+        {/* MODULE 1-4 */}
         {activeTab === 'structure' && (
           <div className="h-[calc(100vh-140px)] grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-left-4 duration-500">
              <div className="lg:col-span-2 flex flex-col gap-4">
@@ -198,10 +200,9 @@ export default function App() {
            </div>
         )}
 
-        {/* MODULE 5: POVERTY TRAP (Phase Diagram) */}
+        {/* MODULE 5: POVERTY TRAP */}
         {activeTab === 'trap' && wealthResult && (
           <div className="h-[calc(100vh-140px)] grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            {/* Left: Visualization */}
             <div className="lg:col-span-2 flex flex-col gap-4">
               <PhaseDiagram 
                 data={wealthResult.phaseData} 
@@ -232,7 +233,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right: Controls */}
             <div className="lg:col-span-1 bg-gray-50 p-6 rounded-xl border border-gray-200 overflow-y-auto custom-scrollbar space-y-6">
               <h3 className="font-bold text-gray-900 border-b border-gray-200 pb-2">模型参数 (Parameters)</h3>
               
@@ -263,7 +263,6 @@ export default function App() {
         {/* MODULE 6: DYNAMIC EVOLUTION */}
         {activeTab === 'evolution' && wealthResult && (
            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-             {/* Controls */}
              <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-6">
                 <ControlSlider 
                   label="初始资本 (Initial K)" value={wealthConfig.initialK} setValue={(v: number) => handleWealthConfigChange('initialK', v)} 
@@ -351,6 +350,16 @@ export default function App() {
                </div>
              </div>
            </div>
+        )}
+
+        {/* MODULE 8: DISSIPATIVE STRUCTURES */}
+        {activeTab === 'dissipative' && (
+           <PhysicsSimulator />
+        )}
+
+        {/* MODULE 9: BAYES THEOREM */}
+        {activeTab === 'bayes' && (
+           <BayesSimulator />
         )}
 
       </main>

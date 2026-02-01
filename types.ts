@@ -95,6 +95,48 @@ export interface PathResult {
   absorptionProbabilities: Vector | null; // Probability of being absorbed into specific states
 }
 
+// --- Module 8: Dissipative Structures Types ---
+
+export type PhysicsSystemType = 'convection' | 'bz_reaction' | 'hurricane';
+
+export interface PhysicsConfig {
+  inputEnergy: number; // Generic slider 0-1 (Heat, Feed Rate, etc.)
+  dissipation: number; // Generic slider 0-1 (Viscosity, Kill Rate, Friction)
+  randomness: number;  // Generic slider 0-1 (Noise, Turbulence)
+}
+
+export interface PhysicsState {
+  grid?: Float32Array; // For Grid based (Convection, BZ)
+  particles?: any[];   // For Hurricane
+  width: number;
+  height: number;
+  entropy: number;     // Calculated metric
+  stepCount: number;
+}
+
+// --- Module 9: Bayes Theorem Types ---
+
+export type BayesScenarioType = 'disease' | 'spam' | 'weather' | 'custom';
+
+export interface BayesConfig {
+  prior: number;          // P(H) - 先验概率
+  sensitivity: number;    // P(E|H) - 敏感度/真阳性率 (True Positive Rate)
+  falsePositive: number;  // P(E|~H) - 假阳性率 (False Positive Rate)
+}
+
+export interface BayesResult {
+  p_h: number;            // P(H)
+  p_not_h: number;        // P(~H)
+  p_e_given_h: number;    // P(E|H)
+  p_e_given_not_h: number;// P(E|~H)
+  
+  // Calculated
+  p_e_and_h: number;      // P(E ∩ H) = P(H) * P(E|H)
+  p_e_and_not_h: number;  // P(E ∩ ~H) = P(~H) * P(E|~H)
+  p_e: number;            // P(E) Total Evidence
+  posterior: number;      // P(H|E) Result
+}
+
 export enum LifeState {
   Stuck = 0,
   Struggling = 1,
