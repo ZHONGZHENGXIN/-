@@ -137,6 +137,41 @@ export interface BayesResult {
   posterior: number;      // P(H|E) Result
 }
 
+// --- Module 10: Network Evolution Types ---
+
+export interface NetNode {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  degree: number;
+  fitness: number; // eta: 0.0 to 1.0
+  isNew?: boolean; // For highlighting
+  birthStep: number;
+}
+
+export interface NetLink {
+  source: number; // Node ID
+  target: number; // Node ID
+}
+
+export interface NetworkConfig {
+  initialNodes: number; // m0
+  newEdges: number;     // m (edges per new node)
+  attractiveness: number; // A: Initial Attractiveness constant
+  speed: number;        // ms per step
+  layoutForce: number;  // visual spread
+}
+
+export interface NetworkState {
+  nodes: NetNode[];
+  links: NetLink[];
+  step: number;
+  degreeDist: { degree: number; count: number }[];
+}
+
+
 export enum LifeState {
   Stuck = 0,
   Struggling = 1,

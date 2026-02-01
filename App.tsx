@@ -23,16 +23,17 @@ import MarkovGraph from './components/MarkovGraph';
 import MatrixEditor from './components/MatrixEditor';
 import FinalDistPieChart from './components/FinalDistPieChart';
 import PhysicsSimulator from './components/PhysicsSimulator'; 
-import BayesSimulator from './components/BayesSimulator'; // Import Bayes
+import BayesSimulator from './components/BayesSimulator'; 
+import NetworkSimulator from './components/NetworkSimulator'; // Import Network
 import Guide from './components/Guide'; 
 import { SimulationResult, ConvergenceResult, WealthSimulationResult, Matrix, PathResult, LifeState } from './types';
 import { 
-  Activity, Settings2, Clock, Anchor, Zap, Lock, Rocket, Route, BookOpen, Atom, BrainCircuit 
+  Activity, Settings2, Clock, Anchor, Zap, Lock, Rocket, Route, BookOpen, Atom, BrainCircuit, Share2 
 } from 'lucide-react';
 
 export default function App() {
   // Set default tab to 'guide' for new users
-  const [activeTab, setActiveTab] = useState<'guide' | 'structure' | 'simulation' | 'steady' | 'convergence' | 'trap' | 'evolution' | 'path' | 'dissipative' | 'bayes'>('guide');
+  const [activeTab, setActiveTab] = useState<'guide' | 'structure' | 'simulation' | 'steady' | 'convergence' | 'trap' | 'evolution' | 'path' | 'dissipative' | 'bayes' | 'network'>('guide');
   
   // -- Simulation State (Module 1-3) --
   const [impactFactor, setImpactFactor] = useState<number>(0.015);
@@ -147,6 +148,7 @@ export default function App() {
             <TabButton active={activeTab === 'path'} onClick={() => setActiveTab('path')} icon={<Route size={16} />} label="M7:路径" />
             <TabButton active={activeTab === 'dissipative'} onClick={() => setActiveTab('dissipative')} icon={<Atom size={16} />} label="M8:耗散" />
             <TabButton active={activeTab === 'bayes'} onClick={() => setActiveTab('bayes')} icon={<BrainCircuit size={16} />} label="M9:贝叶斯" />
+            <TabButton active={activeTab === 'network'} onClick={() => setActiveTab('network')} icon={<Share2 size={16} />} label="M10:网络" />
           </div>
         </div>
       </header>
@@ -360,6 +362,11 @@ export default function App() {
         {/* MODULE 9: BAYES THEOREM */}
         {activeTab === 'bayes' && (
            <BayesSimulator />
+        )}
+
+        {/* MODULE 10: NETWORK EVOLUTION */}
+        {activeTab === 'network' && (
+           <NetworkSimulator />
         )}
 
       </main>
